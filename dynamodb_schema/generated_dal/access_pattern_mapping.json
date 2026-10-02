@@ -1,0 +1,262 @@
+{
+  "metadata": {
+    "generated_at": {
+      "timestamp": "auto-generated"
+    },
+    "total_patterns": 12,
+    "generator_type": "Jinja2Generator"
+  },
+  "access_pattern_mapping": {
+    "1": {
+      "pattern_id": 1,
+      "description": "Register a produced component (status PRODUCED, version 1)",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "register_component",
+      "parameters": [
+        {
+          "name": "component",
+          "type": "entity",
+          "entity_type": "Component"
+        }
+      ],
+      "return_type": "Component | None",
+      "operation": "PutItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "2": {
+      "pattern_id": 2,
+      "description": "Get component by serial number",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "get_component",
+      "parameters": [
+        {
+          "name": "serial_number",
+          "type": "string"
+        }
+      ],
+      "return_type": "Component | None",
+      "operation": "GetItem",
+      "index_name": null,
+      "range_condition": null,
+      "consistent_read": false
+    },
+    "3": {
+      "pattern_id": 3,
+      "description": "Install component into a vehicle: set vin, installed_at and status=INSTALLED",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "install_component",
+      "parameters": [
+        {
+          "name": "serial_number",
+          "type": "string"
+        },
+        {
+          "name": "vin",
+          "type": "string"
+        },
+        {
+          "name": "installed_at",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "return_type": "Component | None",
+      "operation": "UpdateItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "4": {
+      "pattern_id": 4,
+      "description": "List all components installed in a vehicle (sparse GSI on vin)",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "list_components_by_vehicle",
+      "parameters": [
+        {
+          "name": "vin",
+          "type": "string"
+        }
+      ],
+      "return_type": "tuple[list[Component], dict | None]",
+      "operation": "Query",
+      "index_name": "ByVehicle",
+      "range_condition": null,
+      "consistent_read": false,
+      "projection": "INCLUDE",
+      "projected_attributes": [
+        "component_type",
+        "plant_code",
+        "batch_id",
+        "installed_at"
+      ]
+    },
+    "5": {
+      "pattern_id": 5,
+      "description": "Recall lookup: all components of a production batch with their VINs",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "list_components_by_batch",
+      "parameters": [
+        {
+          "name": "batch_id",
+          "type": "string"
+        }
+      ],
+      "return_type": "tuple[list[Component], dict | None]",
+      "operation": "Query",
+      "index_name": "ByBatch",
+      "range_condition": null,
+      "consistent_read": false,
+      "projection": "INCLUDE",
+      "projected_attributes": [
+        "component_type",
+        "status",
+        "vin"
+      ]
+    },
+    "6": {
+      "pattern_id": 6,
+      "description": "Set a component's status to QUARANTINED",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "quarantine_component",
+      "parameters": [
+        {
+          "name": "serial_number",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        }
+      ],
+      "return_type": "Component | None",
+      "operation": "UpdateItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "12": {
+      "pattern_id": 12,
+      "description": "Bulk-register a plant shift's components (up to 25 per request)",
+      "entity": "Component",
+      "repository": "ComponentRepository",
+      "method_name": "batch_register_components",
+      "parameters": [
+        {
+          "name": "components",
+          "type": "entity",
+          "entity_type": "Component"
+        }
+      ],
+      "return_type": "None",
+      "operation": "BatchWriteItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "7": {
+      "pattern_id": 7,
+      "description": "Create a vehicle profile when a VIN is allocated",
+      "entity": "Vehicle",
+      "repository": "VehicleRepository",
+      "method_name": "put_vehicle",
+      "parameters": [
+        {
+          "name": "vehicle",
+          "type": "entity",
+          "entity_type": "Vehicle"
+        }
+      ],
+      "return_type": "Vehicle | None",
+      "operation": "PutItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "8": {
+      "pattern_id": 8,
+      "description": "Get vehicle profile by VIN",
+      "entity": "Vehicle",
+      "repository": "VehicleRepository",
+      "method_name": "get_vehicle",
+      "parameters": [
+        {
+          "name": "vin",
+          "type": "string"
+        }
+      ],
+      "return_type": "Vehicle | None",
+      "operation": "GetItem",
+      "index_name": null,
+      "range_condition": null,
+      "consistent_read": false
+    },
+    "9": {
+      "pattern_id": 9,
+      "description": "Record a workshop service event for a vehicle",
+      "entity": "ServiceEvent",
+      "repository": "ServiceEventRepository",
+      "method_name": "record_service_event",
+      "parameters": [
+        {
+          "name": "service_event",
+          "type": "entity",
+          "entity_type": "ServiceEvent"
+        }
+      ],
+      "return_type": "ServiceEvent | None",
+      "operation": "PutItem",
+      "index_name": null,
+      "range_condition": null
+    },
+    "10": {
+      "pattern_id": 10,
+      "description": "Vehicle service history (all SERVICE# items for a VIN; caller sorts newest first / limits to 20)",
+      "entity": "ServiceEvent",
+      "repository": "ServiceEventRepository",
+      "method_name": "get_service_history",
+      "parameters": [
+        {
+          "name": "vin",
+          "type": "string"
+        },
+        {
+          "name": "sk_prefix",
+          "type": "string"
+        }
+      ],
+      "return_type": "tuple[list[ServiceEvent], dict | None]",
+      "operation": "Query",
+      "index_name": null,
+      "range_condition": "begins_with",
+      "consistent_read": false
+    },
+    "11": {
+      "pattern_id": 11,
+      "description": "Latest service event for a vehicle (same Query as #10 with Limit=1, ScanIndexForward=False)",
+      "entity": "ServiceEvent",
+      "repository": "ServiceEventRepository",
+      "method_name": "get_latest_service_event",
+      "parameters": [
+        {
+          "name": "vin",
+          "type": "string"
+        },
+        {
+          "name": "sk_prefix",
+          "type": "string"
+        }
+      ],
+      "return_type": "tuple[list[ServiceEvent], dict | None]",
+      "operation": "Query",
+      "index_name": null,
+      "range_condition": "begins_with",
+      "consistent_read": false
+    }
+  }
+}

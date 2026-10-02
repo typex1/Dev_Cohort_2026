@@ -1,0 +1,158 @@
+{
+  "tables": [
+    {
+      "TableName": "ScaniaComponents",
+      "AttributeDefinitions": [
+        {"AttributeName": "serial_number", "AttributeType": "S"},
+        {"AttributeName": "vin", "AttributeType": "S"},
+        {"AttributeName": "batch_id", "AttributeType": "S"}
+      ],
+      "KeySchema": [
+        {"AttributeName": "serial_number", "KeyType": "HASH"}
+      ],
+      "GlobalSecondaryIndexes": [
+        {
+          "IndexName": "ByVehicle",
+          "KeySchema": [
+            {"AttributeName": "vin", "KeyType": "HASH"},
+            {"AttributeName": "serial_number", "KeyType": "RANGE"}
+          ],
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": ["component_type", "plant_code", "batch_id", "installed_at"]
+          }
+        },
+        {
+          "IndexName": "ByBatch",
+          "KeySchema": [
+            {"AttributeName": "batch_id", "KeyType": "HASH"},
+            {"AttributeName": "serial_number", "KeyType": "RANGE"}
+          ],
+          "Projection": {
+            "ProjectionType": "INCLUDE",
+            "NonKeyAttributes": ["component_type", "status", "vin"]
+          }
+        }
+      ],
+      "BillingMode": "PAY_PER_REQUEST"
+    },
+    {
+      "TableName": "ScaniaVehicles",
+      "AttributeDefinitions": [
+        {"AttributeName": "vin", "AttributeType": "S"},
+        {"AttributeName": "sk", "AttributeType": "S"}
+      ],
+      "KeySchema": [
+        {"AttributeName": "vin", "KeyType": "HASH"},
+        {"AttributeName": "sk", "KeyType": "RANGE"}
+      ],
+      "BillingMode": "PAY_PER_REQUEST"
+    }
+  ],
+  "items": {
+    "ScaniaComponents": [
+      {"PutRequest": {"Item": {"serial_number": {"S": "GBX-TUC-000101"}, "component_type": {"S": "GEARBOX"}, "plant_code": {"S": "TUC"}, "batch_id": {"S": "GBX-2026-W38-A"}, "produced_at": {"S": "2026-09-14T06:12:00Z"}, "status": {"S": "INSTALLED"}, "vin": {"S": "YS2R4X20005399401"}, "installed_at": {"S": "2026-09-28T09:40:00Z"}, "version": {"N": "2"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "GBX-TUC-000102"}, "component_type": {"S": "GEARBOX"}, "plant_code": {"S": "TUC"}, "batch_id": {"S": "GBX-2026-W38-A"}, "produced_at": {"S": "2026-09-14T06:15:00Z"}, "status": {"S": "PRODUCED"}, "version": {"N": "1"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "CAB-OSK-000201"}, "component_type": {"S": "CAB"}, "plant_code": {"S": "OSK"}, "batch_id": {"S": "CAB-2026-W39-B"}, "produced_at": {"S": "2026-09-22T11:02:00Z"}, "status": {"S": "INSTALLED"}, "vin": {"S": "YS2R4X20005399401"}, "installed_at": {"S": "2026-09-28T08:05:00Z"}, "version": {"N": "2"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "FRM-LUL-000301"}, "component_type": {"S": "FRAME"}, "plant_code": {"S": "LUL"}, "batch_id": {"S": "FRM-2026-W37-C"}, "produced_at": {"S": "2026-09-10T13:30:00Z"}, "status": {"S": "INSTALLED"}, "vin": {"S": "YS2R4X20005399401"}, "installed_at": {"S": "2026-09-28T07:15:00Z"}, "version": {"N": "2"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "ENG-SOD-000401"}, "component_type": {"S": "ENGINE"}, "plant_code": {"S": "SOD"}, "batch_id": {"S": "ENG-2026-W38-D"}, "produced_at": {"S": "2026-09-16T15:45:00Z"}, "status": {"S": "INSTALLED"}, "vin": {"S": "XLER4X20005399402"}, "installed_at": {"S": "2026-09-29T10:00:00Z"}, "version": {"N": "2"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "GBX-TUC-000103"}, "component_type": {"S": "GEARBOX"}, "plant_code": {"S": "TUC"}, "batch_id": {"S": "GBX-2026-W38-A"}, "produced_at": {"S": "2026-09-14T06:18:00Z"}, "status": {"S": "INSTALLED"}, "vin": {"S": "XLER4X20005399402"}, "installed_at": {"S": "2026-09-29T10:30:00Z"}, "version": {"N": "2"}}}},
+      {"PutRequest": {"Item": {"serial_number": {"S": "GBX-TUC-000104"}, "component_type": {"S": "GEARBOX"}, "plant_code": {"S": "TUC"}, "batch_id": {"S": "GBX-2026-W38-A"}, "produced_at": {"S": "2026-09-14T06:21:00Z"}, "status": {"S": "QUARANTINED"}, "version": {"N": "2"}}}}
+    ],
+    "ScaniaVehicles": [
+      {"PutRequest": {"Item": {"vin": {"S": "YS2R4X20005399401"}, "sk": {"S": "PROFILE"}, "model": {"S": "R 560"}, "assembly_plant": {"S": "SOD"}, "build_date": {"S": "2026-09-28"}}}},
+      {"PutRequest": {"Item": {"vin": {"S": "YS2R4X20005399401"}, "sk": {"S": "SERVICE#2026-10-01T08:00:00Z#EVT-0001"}, "event_id": {"S": "EVT-0001"}, "service_date": {"S": "2026-10-01T08:00:00Z"}, "mileage_km": {"N": "1200"}, "workshop": {"S": "Scania Kungens Kurva"}, "description": {"S": "Delivery inspection"}}}},
+      {"PutRequest": {"Item": {"vin": {"S": "YS2R4X20005399401"}, "sk": {"S": "SERVICE#2026-11-15T09:30:00Z#EVT-0002"}, "event_id": {"S": "EVT-0002"}, "service_date": {"S": "2026-11-15T09:30:00Z"}, "mileage_km": {"N": "18450"}, "workshop": {"S": "Scania Jönköping"}, "description": {"S": "First oil service"}}}},
+      {"PutRequest": {"Item": {"vin": {"S": "XLER4X20005399402"}, "sk": {"S": "PROFILE"}, "model": {"S": "S 500"}, "assembly_plant": {"S": "ZWO"}, "build_date": {"S": "2026-09-29"}}}},
+      {"PutRequest": {"Item": {"vin": {"S": "XLER4X20005399402"}, "sk": {"S": "SERVICE#2026-10-03T10:00:00Z#EVT-0003"}, "event_id": {"S": "EVT-0003"}, "service_date": {"S": "2026-10-03T10:00:00Z"}, "mileage_km": {"N": "800"}, "workshop": {"S": "Scania Rotterdam"}, "description": {"S": "Delivery inspection"}}}}
+    ]
+  },
+  "access_patterns": [
+    {
+      "pattern": "1",
+      "description": "Register a produced component",
+      "table": "ScaniaComponents",
+      "dynamodb_operation": "PutItem",
+      "implementation": "aws dynamodb put-item --table-name ScaniaComponents --item '{\"serial_number\": {\"S\": \"GBX-TUC-000105\"}, \"component_type\": {\"S\": \"GEARBOX\"}, \"plant_code\": {\"S\": \"TUC\"}, \"batch_id\": {\"S\": \"GBX-2026-W38-A\"}, \"produced_at\": {\"S\": \"2026-09-14T06:24:00Z\"}, \"status\": {\"S\": \"PRODUCED\"}, \"version\": {\"N\": \"1\"}}' --condition-expression 'attribute_not_exists(#sn)' --expression-attribute-names '{\"#sn\": \"serial_number\"}'"
+    },
+    {
+      "pattern": "2",
+      "description": "Get component by serial number",
+      "table": "ScaniaComponents",
+      "dynamodb_operation": "GetItem",
+      "implementation": "aws dynamodb get-item --table-name ScaniaComponents --key '{\"serial_number\": {\"S\": \"GBX-TUC-000101\"}}'"
+    },
+    {
+      "pattern": "3",
+      "description": "Install component into vehicle",
+      "table": "ScaniaComponents",
+      "dynamodb_operation": "UpdateItem",
+      "implementation": "aws dynamodb update-item --table-name ScaniaComponents --key '{\"serial_number\": {\"S\": \"GBX-TUC-000102\"}}' --update-expression 'SET #vin = :vin, #installed_at = :ts, #status = :installed, #version = #version + :one' --condition-expression '#status = :produced' --expression-attribute-names '{\"#vin\": \"vin\", \"#installed_at\": \"installed_at\", \"#status\": \"status\", \"#version\": \"version\"}' --expression-attribute-values '{\":vin\": {\"S\": \"9BSR4X20005399403\"}, \":ts\": {\"S\": \"2026-09-30T11:00:00Z\"}, \":installed\": {\"S\": \"INSTALLED\"}, \":produced\": {\"S\": \"PRODUCED\"}, \":one\": {\"N\": \"1\"}}' --return-values ALL_NEW"
+    },
+    {
+      "pattern": "4",
+      "description": "List components installed in a vehicle",
+      "table": "ScaniaComponents",
+      "index": "ByVehicle",
+      "dynamodb_operation": "Query",
+      "implementation": "aws dynamodb query --table-name ScaniaComponents --index-name ByVehicle --key-condition-expression '#vin = :vin' --expression-attribute-names '{\"#vin\": \"vin\"}' --expression-attribute-values '{\":vin\": {\"S\": \"YS2R4X20005399401\"}}'"
+    },
+    {
+      "pattern": "5",
+      "description": "Recall: all components of a batch",
+      "table": "ScaniaComponents",
+      "index": "ByBatch",
+      "dynamodb_operation": "Query",
+      "implementation": "aws dynamodb query --table-name ScaniaComponents --index-name ByBatch --key-condition-expression '#batch_id = :batch' --expression-attribute-names '{\"#batch_id\": \"batch_id\"}' --expression-attribute-values '{\":batch\": {\"S\": \"GBX-2026-W38-A\"}}'"
+    },
+    {
+      "pattern": "6",
+      "description": "Quarantine a component",
+      "table": "ScaniaComponents",
+      "dynamodb_operation": "UpdateItem",
+      "implementation": "aws dynamodb update-item --table-name ScaniaComponents --key '{\"serial_number\": {\"S\": \"GBX-TUC-000103\"}}' --update-expression 'SET #status = :quarantined, #version = #version + :one' --condition-expression '#version = :expected' --expression-attribute-names '{\"#status\": \"status\", \"#version\": \"version\"}' --expression-attribute-values '{\":quarantined\": {\"S\": \"QUARANTINED\"}, \":expected\": {\"N\": \"2\"}, \":one\": {\"N\": \"1\"}}' --return-values ALL_NEW"
+    },
+    {
+      "pattern": "7",
+      "description": "Create vehicle profile",
+      "table": "ScaniaVehicles",
+      "dynamodb_operation": "PutItem",
+      "implementation": "aws dynamodb put-item --table-name ScaniaVehicles --item '{\"vin\": {\"S\": \"9BSR4X20005399403\"}, \"sk\": {\"S\": \"PROFILE\"}, \"model\": {\"S\": \"P 280\"}, \"assembly_plant\": {\"S\": \"SBC\"}, \"build_date\": {\"S\": \"2026-09-30\"}}' --condition-expression 'attribute_not_exists(#vin)' --expression-attribute-names '{\"#vin\": \"vin\"}'"
+    },
+    {
+      "pattern": "8",
+      "description": "Get vehicle profile",
+      "table": "ScaniaVehicles",
+      "dynamodb_operation": "GetItem",
+      "implementation": "aws dynamodb get-item --table-name ScaniaVehicles --key '{\"vin\": {\"S\": \"YS2R4X20005399401\"}, \"sk\": {\"S\": \"PROFILE\"}}'"
+    },
+    {
+      "pattern": "9",
+      "description": "Record service event",
+      "table": "ScaniaVehicles",
+      "dynamodb_operation": "PutItem",
+      "implementation": "aws dynamodb put-item --table-name ScaniaVehicles --item '{\"vin\": {\"S\": \"YS2R4X20005399401\"}, \"sk\": {\"S\": \"SERVICE#2026-12-20T14:00:00Z#EVT-0004\"}, \"event_id\": {\"S\": \"EVT-0004\"}, \"service_date\": {\"S\": \"2026-12-20T14:00:00Z\"}, \"mileage_km\": {\"N\": \"31900\"}, \"workshop\": {\"S\": \"Scania Malmö\"}, \"description\": {\"S\": \"Brake pad replacement\"}}'"
+    },
+    {
+      "pattern": "10",
+      "description": "Service history newest first",
+      "table": "ScaniaVehicles",
+      "dynamodb_operation": "Query",
+      "implementation": "aws dynamodb query --table-name ScaniaVehicles --key-condition-expression '#vin = :vin AND begins_with(#sk, :prefix)' --expression-attribute-names '{\"#vin\": \"vin\", \"#sk\": \"sk\"}' --expression-attribute-values '{\":vin\": {\"S\": \"YS2R4X20005399401\"}, \":prefix\": {\"S\": \"SERVICE#\"}}' --no-scan-index-forward --limit 20"
+    },
+    {
+      "pattern": "11",
+      "description": "Latest service event",
+      "table": "ScaniaVehicles",
+      "dynamodb_operation": "Query",
+      "implementation": "aws dynamodb query --table-name ScaniaVehicles --key-condition-expression '#vin = :vin AND begins_with(#sk, :prefix)' --expression-attribute-names '{\"#vin\": \"vin\", \"#sk\": \"sk\"}' --expression-attribute-values '{\":vin\": {\"S\": \"YS2R4X20005399401\"}, \":prefix\": {\"S\": \"SERVICE#\"}}' --no-scan-index-forward --limit 1"
+    },
+    {
+      "pattern": "12",
+      "description": "Bulk-register a shift's components",
+      "table": "ScaniaComponents",
+      "dynamodb_operation": "BatchWriteItem",
+      "implementation": "aws dynamodb batch-write-item --request-items '{\"ScaniaComponents\": [{\"PutRequest\": {\"Item\": {\"serial_number\": {\"S\": \"FRM-LUL-000302\"}, \"component_type\": {\"S\": \"FRAME\"}, \"plant_code\": {\"S\": \"LUL\"}, \"batch_id\": {\"S\": \"FRM-2026-W40-E\"}, \"produced_at\": {\"S\": \"2026-10-01T05:00:00Z\"}, \"status\": {\"S\": \"PRODUCED\"}, \"version\": {\"N\": \"1\"}}}}, {\"PutRequest\": {\"Item\": {\"serial_number\": {\"S\": \"FRM-LUL-000303\"}, \"component_type\": {\"S\": \"FRAME\"}, \"plant_code\": {\"S\": \"LUL\"}, \"batch_id\": {\"S\": \"FRM-2026-W40-E\"}, \"produced_at\": {\"S\": \"2026-10-01T05:04:00Z\"}, \"status\": {\"S\": \"PRODUCED\"}, \"version\": {\"N\": \"1\"}}}}]}'"
+    }
+  ]
+}

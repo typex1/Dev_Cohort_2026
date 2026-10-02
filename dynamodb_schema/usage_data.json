@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "Component": {
+      "sample_data": {
+        "serial_number": "GBX-TUC-007777",
+        "component_type": "GEARBOX",
+        "plant_code": "TUC",
+        "batch_id": "GBX-2026-W41-H",
+        "produced_at": "2026-10-05T07:12:00Z",
+        "status": "PRODUCED",
+        "version": 1
+      },
+      "access_pattern_data": {
+        "serial_number": "ENG-SOD-008888",
+        "component_type": "ENGINE",
+        "plant_code": "SOD",
+        "batch_id": "ENG-2026-W41-J",
+        "produced_at": "2026-10-06T09:30:00Z",
+        "status": "INSTALLED",
+        "vin": "YS2R4X20005409876",
+        "installed_at": "2026-10-12T10:15:00Z",
+        "version": 2
+      },
+      "update_data": {
+        "component_type": "GEARBOX",
+        "plant_code": "TUC",
+        "batch_id": "GBX-2026-W41-H",
+        "produced_at": "2026-10-05T07:12:00Z",
+        "status": "INSTALLED",
+        "vin": "XLER4X20005405432",
+        "installed_at": "2026-10-13T08:00:00Z",
+        "version": 2
+      }
+    },
+    "Vehicle": {
+      "sample_data": {
+        "vin": "YS2R4X20005409876",
+        "model": "R 560",
+        "assembly_plant": "SOD",
+        "build_date": "2026-10-12"
+      },
+      "access_pattern_data": {
+        "vin": "XLER4X20005405432",
+        "model": "S 500",
+        "assembly_plant": "ZWO",
+        "build_date": "2026-10-13"
+      },
+      "update_data": {
+        "model": "R 560 XT",
+        "assembly_plant": "SOD",
+        "build_date": "2026-10-14"
+      }
+    },
+    "ServiceEvent": {
+      "sample_data": {
+        "vin": "YS2R4X20005409876",
+        "event_id": "EVT-9876",
+        "service_date": "2026-11-20T08:00:00Z",
+        "mileage_km": 1500,
+        "workshop": "Scania Kungens Kurva",
+        "description": "Delivery inspection"
+      },
+      "access_pattern_data": {
+        "vin": "XLER4X20005405432",
+        "event_id": "EVT-6543",
+        "service_date": "2026-11-22T13:30:00Z",
+        "mileage_km": 950,
+        "workshop": "Scania Rotterdam",
+        "description": "Delivery inspection"
+      },
+      "update_data": {
+        "mileage_km": 1620,
+        "workshop": "Scania Södertälje",
+        "description": "Delivery inspection - tyre pressure corrected"
+      }
+    }
+  }
+}

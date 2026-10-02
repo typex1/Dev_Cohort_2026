@@ -1,0 +1,206 @@
+{
+  "tables": [
+    {
+      "table_config": {
+        "table_name": "ScaniaComponents",
+        "partition_key": "serial_number"
+      },
+      "gsi_list": [
+        {
+          "name": "ByVehicle",
+          "partition_key": "vin",
+          "sort_key": "serial_number",
+          "projection": "INCLUDE",
+          "included_attributes": ["component_type", "plant_code", "batch_id", "installed_at"]
+        },
+        {
+          "name": "ByBatch",
+          "partition_key": "batch_id",
+          "sort_key": "serial_number",
+          "projection": "INCLUDE",
+          "included_attributes": ["component_type", "status", "vin"]
+        }
+      ],
+      "entities": {
+        "Component": {
+          "entity_type": "COMPONENT",
+          "pk_template": "{serial_number}",
+          "gsi_mappings": [
+            {"name": "ByVehicle", "pk_template": "{vin}", "sk_template": "{serial_number}"},
+            {"name": "ByBatch", "pk_template": "{batch_id}", "sk_template": "{serial_number}"}
+          ],
+          "fields": [
+            {"name": "serial_number", "type": "string", "required": true},
+            {"name": "component_type", "type": "string", "required": true},
+            {"name": "plant_code", "type": "string", "required": true},
+            {"name": "batch_id", "type": "string", "required": true},
+            {"name": "produced_at", "type": "string", "required": true},
+            {"name": "status", "type": "string", "required": true},
+            {"name": "vin", "type": "string", "required": false},
+            {"name": "installed_at", "type": "string", "required": false},
+            {"name": "version", "type": "integer", "required": true}
+          ],
+          "access_patterns": [
+            {
+              "pattern_id": 1,
+              "name": "register_component",
+              "description": "Register a produced component (status PRODUCED, version 1)",
+              "operation": "PutItem",
+              "parameters": [{"name": "component", "type": "entity", "entity_type": "Component"}],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 2,
+              "name": "get_component",
+              "description": "Get component by serial number",
+              "operation": "GetItem",
+              "consistent_read": false,
+              "parameters": [{"name": "serial_number", "type": "string"}],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 3,
+              "name": "install_component",
+              "description": "Install component into a vehicle: set vin, installed_at and status=INSTALLED",
+              "operation": "UpdateItem",
+              "parameters": [
+                {"name": "serial_number", "type": "string"},
+                {"name": "vin", "type": "string"},
+                {"name": "installed_at", "type": "string"},
+                {"name": "status", "type": "string"}
+              ],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 4,
+              "name": "list_components_by_vehicle",
+              "description": "List all components installed in a vehicle (sparse GSI on vin)",
+              "operation": "Query",
+              "index_name": "ByVehicle",
+              "consistent_read": false,
+              "parameters": [{"name": "vin", "type": "string"}],
+              "return_type": "entity_list"
+            },
+            {
+              "pattern_id": 5,
+              "name": "list_components_by_batch",
+              "description": "Recall lookup: all components of a production batch with their VINs",
+              "operation": "Query",
+              "index_name": "ByBatch",
+              "consistent_read": false,
+              "parameters": [{"name": "batch_id", "type": "string"}],
+              "return_type": "entity_list"
+            },
+            {
+              "pattern_id": 6,
+              "name": "quarantine_component",
+              "description": "Set a component's status to QUARANTINED",
+              "operation": "UpdateItem",
+              "parameters": [
+                {"name": "serial_number", "type": "string"},
+                {"name": "status", "type": "string"}
+              ],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 12,
+              "name": "batch_register_components",
+              "description": "Bulk-register a plant shift's components (up to 25 per request)",
+              "operation": "BatchWriteItem",
+              "parameters": [{"name": "components", "type": "entity", "entity_type": "Component"}],
+              "return_type": "void"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "table_config": {
+        "table_name": "ScaniaVehicles",
+        "partition_key": "vin",
+        "sort_key": "sk"
+      },
+      "entities": {
+        "Vehicle": {
+          "entity_type": "PROFILE",
+          "pk_template": "{vin}",
+          "sk_template": "PROFILE",
+          "fields": [
+            {"name": "vin", "type": "string", "required": true},
+            {"name": "model", "type": "string", "required": true},
+            {"name": "assembly_plant", "type": "string", "required": true},
+            {"name": "build_date", "type": "string", "required": true}
+          ],
+          "access_patterns": [
+            {
+              "pattern_id": 7,
+              "name": "create_vehicle",
+              "description": "Create a vehicle profile when a VIN is allocated",
+              "operation": "PutItem",
+              "parameters": [{"name": "vehicle", "type": "entity", "entity_type": "Vehicle"}],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 8,
+              "name": "get_vehicle",
+              "description": "Get vehicle profile by VIN",
+              "operation": "GetItem",
+              "consistent_read": false,
+              "parameters": [{"name": "vin", "type": "string"}],
+              "return_type": "single_entity"
+            }
+          ]
+        },
+        "ServiceEvent": {
+          "entity_type": "SERVICE",
+          "pk_template": "{vin}",
+          "sk_template": "SERVICE#{service_date}#{event_id}",
+          "fields": [
+            {"name": "vin", "type": "string", "required": true},
+            {"name": "event_id", "type": "string", "required": true},
+            {"name": "service_date", "type": "string", "required": true},
+            {"name": "mileage_km", "type": "integer", "required": true},
+            {"name": "workshop", "type": "string", "required": true},
+            {"name": "description", "type": "string", "required": true}
+          ],
+          "access_patterns": [
+            {
+              "pattern_id": 9,
+              "name": "record_service_event",
+              "description": "Record a workshop service event for a vehicle",
+              "operation": "PutItem",
+              "parameters": [{"name": "service_event", "type": "entity", "entity_type": "ServiceEvent"}],
+              "return_type": "single_entity"
+            },
+            {
+              "pattern_id": 10,
+              "name": "get_service_history",
+              "description": "Vehicle service history (all SERVICE# items for a VIN; caller sorts newest first / limits to 20)",
+              "operation": "Query",
+              "range_condition": "begins_with",
+              "consistent_read": false,
+              "parameters": [
+                {"name": "vin", "type": "string"},
+                {"name": "sk_prefix", "type": "string"}
+              ],
+              "return_type": "entity_list"
+            },
+            {
+              "pattern_id": 11,
+              "name": "get_latest_service_event",
+              "description": "Latest service event for a vehicle (same Query as #10 with Limit=1, ScanIndexForward=False)",
+              "operation": "Query",
+              "range_condition": "begins_with",
+              "consistent_read": false,
+              "parameters": [
+                {"name": "vin", "type": "string"},
+                {"name": "sk_prefix", "type": "string"}
+              ],
+              "return_type": "entity_list"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
